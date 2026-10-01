@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Calculator</string>
+    <string name="clear">C</string>
+    <string name="backspace">⌫</string>
+    <string name="plus_minus">±</string>
+    <string name="op_divide">÷</string>
+    <string name="op_multiply">×</string>
+    <string name="op_subtract">−</string>
+    <string name="op_add">+</string>
+    <string name="equals">=</string>
+    <string name="dot">.</string>
+    <string name="error">Ошибка</string>
+</resources>
