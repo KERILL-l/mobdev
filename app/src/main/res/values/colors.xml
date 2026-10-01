@@ -1,25 +1,18 @@
 <resources>
-    <color name="primary">#FF6200EE</color>
-    <color name="primary_dark">#FF3700B3</color>
-    <color name="accent">#FF03DAC5</color>
-    <color name="bg_light">#F5F5F7</color>
-    <color name="display_text_light">#1D1D1F</color>
-    <color name="display_subtext_light">#86868B</color>
-    <color name="btn_digit_bg_light">#FFFFFF</color>
-    <color name="btn_digit_text_light">#1D1D1F</color>
-    <color name="btn_op_bg_light">#E5E5EA</color>
-    <color name="btn_op_text_light">#007AFF</color>
-    <color name="btn_action_bg_light">#FF3B30</color>
-    <color name="btn_action_text_light">#FFFFFF</color>
-    <color name="btn_equals_bg">#007AFF</color>
-    <color name="btn_equals_text">#FFFFFF</color>
+    <color name="primary">#007AFF</color>
+    <color name="primary_variant">#0056B3</color>
+    <color name="on_primary">#FFFFFF</color>
 
-    <!-- Night colors -->
-    <color name="bg_dark">#000000</color>
-    <color name="display_text_dark">#FFFFFF</color>
-    <color name="display_subtext_dark">#8E8E93</color>
-    <color name="btn_digit_bg_dark">#1C1C1E</color>
-    <color name="btn_digit_text_dark">#FFFFFF</color>
-    <color name="btn_op_bg_dark">#2C2C2E</color>
-    <color name="btn_op_text_dark">#0A84FF</color>
+    <color name="avatar_bg">#E5E5EA</color>
+    <color name="avatar_text">#1D1D1F</color>
+
+    <color name="surface_light">#FFFFFF</color>
+    <color name="background_light">#F2F2F7</color>
+    <color name="text_primary_light">#000000</color>
+    <color name="text_secondary_light">#8E8E93</color>
+
+    <color name="surface_dark">#1C1C1E</color>
+    <color name="background_dark">#000000</color>
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#8E8E93</color>
 </resources>

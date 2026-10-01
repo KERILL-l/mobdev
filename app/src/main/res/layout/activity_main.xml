@@ -4,288 +4,133 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".MainActivity">
 
-    <!-- Display Section -->
-    <LinearLayout
+    <!-- App Bar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.2"
-        android:gravity="bottom|end"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp"
+        app:title="@string/app_name"
+        app:titleTextColor="?attr/colorOnSurface" />
 
-        <TextView
-            android:id="@+id/tvExpression"
+    <!-- Search Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchLayout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:endIconMode="clear_text"
+        app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
+            android:hint="@string/search_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
             android:maxLines="1"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="22sp"
-            tools:text="125 + " />
+            android:paddingVertical="10dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/tvDisplay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="start"
-            android:gravity="end"
-            android:maxLines="1"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            tools:text="0" />
-    </LinearLayout>
-
-    <!-- Keypad Section -->
-    <LinearLayout
+    <!-- Main Content Frame -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3.2"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <!-- Row 0: C, ±, ⌫, ÷ -->
-        <LinearLayout
+        <!-- Contacts List with Pull-to-refresh -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnC"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvContacts"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/clear"
-                android:textSize="20sp" />
+                android:clipToPadding="false"
+                android:paddingTop="4dp"
+                android:paddingBottom="16dp"
+                tools:listitem="@layout/item_contact" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPlusMinus"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/plus_minus"
-                android:textSize="20sp" />
+        <!-- Loading Progress -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnBackspace"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/backspace"
-                android:textSize="20sp" />
+        <!-- Empty State View -->
+        <LinearLayout
+            android:id="@+id/layoutEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDivide"
-                style="@style/Widget.Material3.Button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/op_divide"
-                android:textSize="24sp" />
+            <TextView
+                android:id="@+id/tvEmptyMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/empty_contacts"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Row 1: 7, 8, 9, × -->
+        <!-- Permission Required State -->
         <LinearLayout
+            android:id="@+id/layoutPermissionRequired"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/permission_required_title"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/permission_required_desc"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="14sp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn7"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="7"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn8"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="8"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn9"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="9"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMultiply"
+                android:id="@+id/btnGrantPermission"
                 style="@style/Widget.Material3.Button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/op_multiply"
-                android:textSize="24sp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/btn_grant_permission" />
         </LinearLayout>
 
-        <!-- Row 2: 4, 5, 6, − -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn4"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="4"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn5"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="5"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn6"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="6"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSubtract"
-                style="@style/Widget.Material3.Button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/op_subtract"
-                android:textSize="24sp" />
-        </LinearLayout>
-
-        <!-- Row 3: 1, 2, 3, + -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn1"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="1"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn2"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="2"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn3"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="3"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAdd"
-                style="@style/Widget.Material3.Button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/op_add"
-                android:textSize="24sp" />
-        </LinearLayout>
-
-        <!-- Row 4: 00, 0, ., = -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn00"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="00"
-                android:textSize="20sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn0"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="0"
-                android:textSize="22sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDot"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/dot"
-                android:textSize="24sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEquals"
-                style="@style/Widget.Material3.Button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:text="@string/equals"
-                android:textSize="24sp" />
-        </LinearLayout>
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
