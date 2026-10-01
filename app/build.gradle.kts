@@ -44,6 +44,17 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity.ktx)
+    implementation(libs.swiperefreshlayout)
+
+    // Networking
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.converter.scalars)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    // Image loading
+    implementation(libs.coil)
 
     testImplementation(libs.junit)
     testImplementation("androidx.arch.core:core-testing:2.2.0")

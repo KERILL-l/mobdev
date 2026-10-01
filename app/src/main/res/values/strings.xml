@@ -1,13 +1,16 @@
 <resources>
-    <string name="app_name">Calculator</string>
-    <string name="clear">C</string>
-    <string name="backspace">⌫</string>
-    <string name="plus_minus">±</string>
-    <string name="op_divide">÷</string>
-    <string name="op_multiply">×</string>
-    <string name="op_subtract">−</string>
-    <string name="op_add">+</string>
-    <string name="equals">=</string>
-    <string name="dot">.</string>
-    <string name="error">Ошибка</string>
+    <string name="app_name">MobDev Chat</string>
+    <string name="login_title">Вход в чат</string>
+    <string name="username_hint">Имя пользователя</string>
+    <string name="password_hint">Пароль</string>
+    <string name="btn_login">Войти</string>
+    <string name="channels_title">Каналы</string>
+    <string name="btn_logout">Выйти</string>
+    <string name="message_hint">Сообщение...</string>
+    <string name="btn_send">Отправить</string>
+    <string name="empty_channels">Нет доступных каналов</string>
+    <string name="empty_messages">Сообщений пока нет. Напишите первым!</string>
+    <string name="login_error">Ошибка авторизации. Проверьте данные.</string>
+    <string name="network_error">Ошибка соединения с сервером.</string>
+    <string name="empty_credentials">Пожалуйста, введите логин и пароль.</string>
 </resources>
