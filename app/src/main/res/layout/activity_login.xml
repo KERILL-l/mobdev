@@ -30,9 +30,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="28dp"
-        android:text="Сервер: faerytea.name"
+        android:gravity="center"
+        android:text="Сервер: faerytea.name\n(для быстрого теста: логин demo / пароль demo)"
         android:textColor="?android:attr/textColorSecondary"
-        android:textSize="14sp" />
+        android:textSize="13sp" />
 
     <!-- Username Input -->
     <com.google.android.material.textfield.TextInputLayout
