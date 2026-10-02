@@ -60,7 +60,7 @@ class ChatRepository(
 
     suspend fun getMessages(
         channel: String,
-        limit: Int = 30,
+        limit: Int = 20,
         lastKnownId: Long? = null,
     ): Result<List<ChatMessage>> = withContext(Dispatchers.IO) {
         val token = sessionManager.token ?: throw IllegalStateException("Необходима авторизация")

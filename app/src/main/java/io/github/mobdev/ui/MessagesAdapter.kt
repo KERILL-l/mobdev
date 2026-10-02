@@ -13,6 +13,7 @@ import io.github.mobdev.databinding.ItemMessageOutgoingBinding
 
 class MessagesAdapter(
     private val currentUsername: String,
+    private val onImageClick: (String) -> Unit = {},
 ) : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(DiffCallback) {
 
     override fun getItemViewType(position: Int): Int {
@@ -28,10 +29,10 @@ class MessagesAdapter(
         val inflater = LayoutInflater.from(parent.context)
         return if (viewType == VIEW_TYPE_OUTGOING) {
             val binding = ItemMessageOutgoingBinding.inflate(inflater, parent, false)
-            OutgoingViewHolder(binding)
+            OutgoingViewHolder(binding, onImageClick)
         } else {
             val binding = ItemMessageIncomingBinding.inflate(inflater, parent, false)
-            IncomingViewHolder(binding)
+            IncomingViewHolder(binding, onImageClick)
         }
     }
 
@@ -46,6 +47,7 @@ class MessagesAdapter(
 
     class OutgoingViewHolder(
         private val binding: ItemMessageOutgoingBinding,
+        private val onImageClick: (String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: ChatMessage) {
@@ -57,14 +59,21 @@ class MessagesAdapter(
                 binding.tvMessage.visibility = View.GONE
             }
 
-            val imgUrl = message.imageUrl
-            if (!imgUrl.isNullOrBlank()) {
+            val thumbUrl = message.thumbnailUrl
+            val fullUrl = message.fullImageUrl ?: thumbUrl
+            if (!thumbUrl.isNullOrBlank()) {
                 binding.ivImage.visibility = View.VISIBLE
-                binding.ivImage.load(imgUrl) {
+                binding.ivImage.load(thumbUrl) {
                     crossfade(true)
+                }
+                binding.ivImage.setOnClickListener {
+                    if (!fullUrl.isNullOrBlank()) {
+                        onImageClick(fullUrl)
+                    }
                 }
             } else {
                 binding.ivImage.visibility = View.GONE
+                binding.ivImage.setOnClickListener(null)
             }
 
             binding.tvTime.text = message.formattedTime
@@ -73,6 +82,7 @@ class MessagesAdapter(
 
     class IncomingViewHolder(
         private val binding: ItemMessageIncomingBinding,
+        private val onImageClick: (String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: ChatMessage) {
@@ -86,14 +96,21 @@ class MessagesAdapter(
                 binding.tvMessage.visibility = View.GONE
             }
 
-            val imgUrl = message.imageUrl
-            if (!imgUrl.isNullOrBlank()) {
+            val thumbUrl = message.thumbnailUrl
+            val fullUrl = message.fullImageUrl ?: thumbUrl
+            if (!thumbUrl.isNullOrBlank()) {
                 binding.ivImage.visibility = View.VISIBLE
-                binding.ivImage.load(imgUrl) {
+                binding.ivImage.load(thumbUrl) {
                     crossfade(true)
+                }
+                binding.ivImage.setOnClickListener {
+                    if (!fullUrl.isNullOrBlank()) {
+                        onImageClick(fullUrl)
+                    }
                 }
             } else {
                 binding.ivImage.visibility = View.GONE
+                binding.ivImage.setOnClickListener(null)
             }
 
             binding.tvTime.text = message.formattedTime

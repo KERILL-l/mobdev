@@ -82,4 +82,29 @@ class ChatModelsTest {
         val textObj = request.data.getAsJsonObject("Text")
         assertEquals("Testing message sending", textObj.get("text").asString)
     }
+
+    @Test
+    fun `test relative image URLs resolution to thumb and img endpoints`() {
+        val message = ChatMessage(
+            id = 103,
+            from = "user",
+            data = MessageData.Image("uploads/cats/kitty.jpg"),
+        )
+
+        assertEquals("https://faerytea.name/thumb/uploads/cats/kitty.jpg", message.thumbnailUrl)
+        assertEquals("https://faerytea.name/img/uploads/cats/kitty.jpg", message.fullImageUrl)
+    }
+
+    @Test
+    fun `test absolute image URLs resolution`() {
+        val absoluteUrl = "https://example.com/custom_image.png"
+        val message = ChatMessage(
+            id = 104,
+            from = "user",
+            data = MessageData.Image(absoluteUrl),
+        )
+
+        assertEquals(absoluteUrl, message.thumbnailUrl)
+        assertEquals(absoluteUrl, message.fullImageUrl)
+    }
 }

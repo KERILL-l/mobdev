@@ -75,6 +75,26 @@ data class ChatMessage(
 
     val imageUrl: String?
         get() = (data as? MessageData.Image)?.link
+
+    val thumbnailUrl: String?
+        get() {
+            val link = imageUrl ?: return null
+            return if (link.startsWith("http://") || link.startsWith("https://")) {
+                link
+            } else {
+                "https://faerytea.name/thumb/" + link.removePrefix("/")
+            }
+        }
+
+    val fullImageUrl: String?
+        get() {
+            val link = imageUrl ?: return null
+            return if (link.startsWith("http://") || link.startsWith("https://")) {
+                link
+            } else {
+                "https://faerytea.name/img/" + link.removePrefix("/")
+            }
+        }
 }
 
 data class SendMessageRequest(

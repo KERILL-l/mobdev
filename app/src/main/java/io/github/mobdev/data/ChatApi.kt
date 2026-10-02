@@ -27,7 +27,7 @@ interface ChatApi {
     suspend fun getChannelMessages(
         @Header("X-Auth-Token") token: String,
         @Path("channel") channel: String,
-        @Query("limit") limit: Int = 30,
+        @Query("limit") limit: Int = 20,
         @Query("lastKnownId") lastKnownId: String? = null,
         @Query("reverse") reverse: Boolean = true,
     ): List<ChatMessage>

@@ -1,0 +1,178 @@
+package io.github.mobdev.ui
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import io.github.mobdev.R
+import io.github.mobdev.data.AuthEvents
+import io.github.mobdev.data.ChatMessage
+import io.github.mobdev.data.ChatRepository
+import io.github.mobdev.data.SessionManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+data class MainUiState(
+    val channels: List<String> = emptyList(),
+    val isLoadingChannels: Boolean = false,
+    val channelsError: String? = null,
+    val selectedChannel: String? = null,
+    val messagesByChannel: Map<String, List<ChatMessage>> = emptyMap(),
+    val isLoadingMessages: Boolean = false,
+    val isSendingMessage: Boolean = false,
+    val messagesError: String? = null,
+    val fullScreenImageUrl: String? = null,
+    val isLoggedOut: Boolean = false,
+) {
+    val currentMessages: List<ChatMessage>
+        get() = selectedChannel?.let { messagesByChannel[it] }.orEmpty()
+}
+
+class MainViewModel @JvmOverloads constructor(
+    application: Application,
+    private val repository: ChatRepository = ChatRepository(
+        sessionManager = SessionManager(application),
+    ),
+) : AndroidViewModel(application) {
+
+    private val _uiState = MutableStateFlow(MainUiState())
+    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+
+    val currentUsername: String
+        get() = repository.sessionManager.username.orEmpty()
+
+    init {
+        observeUnauthorized()
+        loadChannels(force = false)
+    }
+
+    private fun observeUnauthorized() {
+        viewModelScope.launch {
+            AuthEvents.unauthorizedFlow.collect {
+                logout()
+            }
+        }
+    }
+
+    fun loadChannels(force: Boolean = false) {
+        if (!force && _uiState.value.channels.isNotEmpty()) {
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingChannels = true, channelsError = null) }
+            val result = repository.getChannels()
+            result.onSuccess { channels ->
+                _uiState.update {
+                    it.copy(
+                        channels = channels,
+                        isLoadingChannels = false,
+                        channelsError = null,
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isLoadingChannels = false,
+                        channelsError = error.localizedMessage
+                            ?: getApplication<Application>().getString(R.string.network_error),
+                    )
+                }
+            }
+        }
+    }
+
+    fun selectChannel(channel: String) {
+        if (_uiState.value.selectedChannel == channel) return
+        _uiState.update {
+            it.copy(
+                selectedChannel = channel,
+                messagesError = null,
+            )
+        }
+        loadMessages(channel = channel, force = false)
+    }
+
+    fun clearSelectedChannel() {
+        _uiState.update {
+            it.copy(selectedChannel = null)
+        }
+    }
+
+    fun loadMessages(channel: String = _uiState.value.selectedChannel.orEmpty(), force: Boolean = false) {
+        if (channel.isBlank()) return
+        if (!force && _uiState.value.messagesByChannel.containsKey(channel)) {
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingMessages = true, messagesError = null) }
+            val result = repository.getMessages(channel = channel, limit = 20)
+            result.onSuccess { newMessages ->
+                _uiState.update { state ->
+                    val updatedMap = state.messagesByChannel.toMutableMap()
+                    updatedMap[channel] = newMessages
+                    state.copy(
+                        messagesByChannel = updatedMap,
+                        isLoadingMessages = false,
+                        messagesError = null,
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isLoadingMessages = false,
+                        messagesError = error.localizedMessage
+                            ?: getApplication<Application>().getString(R.string.network_error),
+                    )
+                }
+            }
+        }
+    }
+
+    fun sendMessage(text: String) {
+        val channel = _uiState.value.selectedChannel ?: return
+        val trimmed = text.trim()
+        if (trimmed.isEmpty()) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSendingMessage = true, messagesError = null) }
+            val result = repository.sendMessage(channel, trimmed)
+            result.onSuccess {
+                _uiState.update { it.copy(isSendingMessage = false) }
+                loadMessages(channel, force = true)
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isSendingMessage = false,
+                        messagesError = error.localizedMessage
+                            ?: getApplication<Application>().getString(R.string.network_error),
+                    )
+                }
+            }
+        }
+    }
+
+    fun openImage(url: String) {
+        _uiState.update { it.copy(fullScreenImageUrl = url) }
+    }
+
+    fun closeImage() {
+        _uiState.update { it.copy(fullScreenImageUrl = null) }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            repository.logout()
+            _uiState.update {
+                it.copy(
+                    isLoggedOut = true,
+                    selectedChannel = null,
+                    fullScreenImageUrl = null,
+                )
+            }
+        }
+    }
+}

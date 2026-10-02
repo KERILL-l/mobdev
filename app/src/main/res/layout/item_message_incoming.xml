@@ -58,7 +58,9 @@
                     android:layout_height="180dp"
                     android:layout_marginVertical="4dp"
                     android:adjustViewBounds="true"
-                    android:contentDescription="Attached image"
+                    android:clickable="true"
+                    android:contentDescription="@string/image_description"
+                    android:focusable="true"
                     android:scaleType="centerCrop"
                     android:visibility="gone" />
 

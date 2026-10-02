@@ -43,6 +43,13 @@ object ApiClient {
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(20, TimeUnit.SECONDS)
         .writeTimeout(20, TimeUnit.SECONDS)
+        .addInterceptor { chain ->
+            val response = chain.proceed(chain.request())
+            if (response.code == 401) {
+                AuthEvents.notifyUnauthorized()
+            }
+            response
+        }
         .addInterceptor(
             HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BASIC

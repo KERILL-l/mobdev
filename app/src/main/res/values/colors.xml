@@ -21,4 +21,7 @@
     <color name="surface_dark">#1C1C1E</color>
     <color name="text_primary_dark">#FFFFFF</color>
     <color name="text_secondary_dark">#8E8E93</color>
+    <color name="divider">#338E8E93</color>
+    <color name="channel_selected_bg">#20007AFF</color>
+    <color name="overlay_background">#E6000000</color>
 </resources>

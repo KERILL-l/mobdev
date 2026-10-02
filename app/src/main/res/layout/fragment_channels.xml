@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
-    android:orientation="vertical"
-    tools:context=".ui.ChannelsActivity">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
-    <!-- Top App Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -36,7 +35,6 @@
                 tools:listitem="@layout/item_channel" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <!-- Progress -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
@@ -44,7 +42,6 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <!-- Empty State -->
         <TextView
             android:id="@+id/tvEmpty"
             android:layout_width="wrap_content"

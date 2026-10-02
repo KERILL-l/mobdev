@@ -5,7 +5,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import io.github.mobdev.R
 import io.github.mobdev.databinding.ActivityLoginBinding
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -15,14 +21,20 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Auto-login if session exists
+        // Skipped if username & password / session were saved previously
         if (viewModel.hasActiveSession) {
-            navigateToChannels()
+            navigateToMain()
             return
         }
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         setupListeners()
         observeViewModel()
@@ -36,26 +48,39 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private var errorDialog: androidx.appcompat.app.AlertDialog? = null
+
     private fun observeViewModel() {
-        viewModel.uiState.observe(this) { state ->
-            binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
-            binding.btnLogin.isEnabled = !state.isLoading
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                    binding.btnLogin.isEnabled = !state.isLoading
 
-            if (state.errorMessage != null) {
-                binding.tvError.text = state.errorMessage
-                binding.tvError.visibility = View.VISIBLE
-            } else {
-                binding.tvError.visibility = View.GONE
-            }
+                    if (state.errorMessage != null && (errorDialog == null || !errorDialog!!.isShowing)) {
+                        val message = state.errorMessage
+                        viewModel.clearError()
+                        errorDialog = MaterialAlertDialogBuilder(this@LoginActivity)
+                            .setTitle(R.string.error_dialog_title)
+                            .setMessage(message)
+                            .setPositiveButton(R.string.btn_ok) { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    }
 
-            if (state.isSuccess) {
-                navigateToChannels()
+                    if (state.isSuccess) {
+                        navigateToMain()
+                    }
+                }
             }
         }
     }
 
-    private fun navigateToChannels() {
-        val intent = Intent(this, ChannelsActivity::class.java)
+    private fun navigateToMain() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
         finish()
     }

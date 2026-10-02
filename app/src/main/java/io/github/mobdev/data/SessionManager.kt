@@ -35,3 +35,12 @@ class SessionManager(context: Context) {
         private const val KEY_USERNAME = "username"
     }
 }
+
+object AuthEvents {
+    private val _unauthorizedFlow = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val unauthorizedFlow: kotlinx.coroutines.flow.SharedFlow<Unit> = _unauthorizedFlow
+
+    fun notifyUnauthorized() {
+        _unauthorizedFlow.tryEmit(Unit)
+    }
+}

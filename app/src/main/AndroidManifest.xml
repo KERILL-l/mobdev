@@ -24,13 +24,8 @@
         </activity>
 
         <activity
-            android:name=".ui.ChannelsActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.ChatActivity"
+            android:name=".ui.MainActivity"
             android:exported="false"
-            android:parentActivityName=".ui.ChannelsActivity"
             android:windowSoftInputMode="adjustResize" />
     </application>
 

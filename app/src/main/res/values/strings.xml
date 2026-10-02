@@ -13,4 +13,16 @@
     <string name="login_error">Ошибка авторизации. Проверьте данные.</string>
     <string name="network_error">Ошибка соединения с сервером.</string>
     <string name="empty_credentials">Пожалуйста, введите логин и пароль.</string>
+    <string name="select_chat">Выберите чат</string>
+    <string name="select_chat_hint">Выберите канал из списка слева</string>
+    <string name="error_dialog_title">Ошибка</string>
+    <string name="error_invalid_credentials">Неверный логин / пароль</string>
+    <string name="btn_ok">ОК</string>
+    <string name="btn_close">Закрыть</string>
+    <string name="image_description">Изображение</string>
+    <string name="close_image_description">Закрыть изображение</string>
+    <string name="avatar_description">Аватар</string>
+    <string name="send_description">Отправить</string>
+    <string name="back_description">Назад</string>
+    <string name="session_expired">Сессия завершена. Пожалуйста, выполните вход заново.</string>
 </resources>
