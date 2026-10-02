@@ -5,7 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.mobdev.R
 import io.github.mobdev.data.ChatRepository
+import io.github.mobdev.data.NetworkMonitor
 import io.github.mobdev.data.SessionManager
+import io.github.mobdev.data.db.ChatDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +24,8 @@ class LoginViewModel @JvmOverloads constructor(
     application: Application,
     private val repository: ChatRepository = ChatRepository(
         sessionManager = SessionManager(application),
+        chatDao = ChatDatabase.getInstance(application).chatDao(),
+        networkMonitor = NetworkMonitor(application),
     ),
 ) : AndroidViewModel(application) {
 

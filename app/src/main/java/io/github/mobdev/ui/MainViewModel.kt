@@ -7,7 +7,9 @@ import io.github.mobdev.R
 import io.github.mobdev.data.AuthEvents
 import io.github.mobdev.data.ChatMessage
 import io.github.mobdev.data.ChatRepository
+import io.github.mobdev.data.NetworkMonitor
 import io.github.mobdev.data.SessionManager
+import io.github.mobdev.data.db.ChatDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +27,7 @@ data class MainUiState(
     val messagesError: String? = null,
     val fullScreenImageUrl: String? = null,
     val isLoggedOut: Boolean = false,
+    val isOnline: Boolean = true,
 ) {
     val currentMessages: List<ChatMessage>
         get() = selectedChannel?.let { messagesByChannel[it] }.orEmpty()
@@ -34,10 +37,13 @@ class MainViewModel @JvmOverloads constructor(
     application: Application,
     private val repository: ChatRepository = ChatRepository(
         sessionManager = SessionManager(application),
+        chatDao = ChatDatabase.getInstance(application).chatDao(),
+        networkMonitor = NetworkMonitor(application),
     ),
+    private val networkMonitor: NetworkMonitor = repository.networkMonitor ?: NetworkMonitor(application),
 ) : AndroidViewModel(application) {
 
-    private val _uiState = MutableStateFlow(MainUiState())
+    private val _uiState = MutableStateFlow(MainUiState(isOnline = networkMonitor.isOnline.value))
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     val currentUsername: String
@@ -45,7 +51,34 @@ class MainViewModel @JvmOverloads constructor(
 
     init {
         observeUnauthorized()
+        observeNetwork()
+        viewModelScope.launch {
+            if (networkMonitor.isOnline.value) {
+                repository.syncPendingMessages()
+            }
+        }
         loadChannels(force = false)
+    }
+
+    private fun observeNetwork() {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collect { online ->
+                _uiState.update { it.copy(isOnline = online) }
+            }
+        }
+        viewModelScope.launch {
+            networkMonitor.onConnectedFlow.collect {
+                // Connection restored!
+                // 1. Sync any pending offline messages
+                repository.syncPendingMessages()
+                // 2. Refresh channels & current chat
+                loadChannels(force = true)
+                val currentChannel = _uiState.value.selectedChannel
+                if (!currentChannel.isNullOrBlank()) {
+                    loadMessages(channel = currentChannel, force = true)
+                }
+            }
+        }
     }
 
     private fun observeUnauthorized() {

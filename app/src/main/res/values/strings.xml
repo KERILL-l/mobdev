@@ -25,4 +25,6 @@
     <string name="send_description">Отправить</string>
     <string name="back_description">Назад</string>
     <string name="session_expired">Сессия завершена. Пожалуйста, выполните вход заново.</string>
+    <string name="offline_mode">Офлайн-режим (показ из кэша)</string>
+    <string name="status_pending">В очереди</string>
 </resources>

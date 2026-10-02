@@ -76,7 +76,12 @@ class MessagesAdapter(
                 binding.ivImage.setOnClickListener(null)
             }
 
-            binding.tvTime.text = message.formattedTime
+            binding.tvPending.visibility = if (message.isPending) View.VISIBLE else View.GONE
+            if (message.isPending) {
+                binding.tvTime.text = binding.root.context.getString(io.github.mobdev.R.string.status_pending)
+            } else {
+                binding.tvTime.text = message.formattedTime
+            }
         }
     }
 

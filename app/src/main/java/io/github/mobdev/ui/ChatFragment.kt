@@ -92,6 +92,8 @@ class ChatFragment : Fragment() {
                     val channel = state.selectedChannel
                     binding.toolbar.title = if (channel != null) "#$channel" else ""
 
+                    binding.tvOfflineBanner.visibility = if (!state.isOnline) View.VISIBLE else View.GONE
+
                     binding.swipeRefresh.isRefreshing = false
                     binding.progressBar.visibility =
                         if (state.isLoadingMessages && state.currentMessages.isEmpty()) View.VISIBLE else View.GONE

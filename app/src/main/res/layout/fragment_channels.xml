@@ -17,6 +17,18 @@
         app:title="@string/channels_title"
         app:titleTextColor="?attr/colorOnSurface" />
 
+    <TextView
+        android:id="@+id/tvOfflineBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF3CD"
+        android:gravity="center"
+        android:paddingVertical="4dp"
+        android:text="@string/offline_mode"
+        android:textColor="#856404"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

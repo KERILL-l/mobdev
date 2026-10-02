@@ -90,6 +90,7 @@ class ChannelsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.uiState.collect { state ->
+                    binding.tvOfflineBanner.visibility = if (!state.isOnline) View.VISIBLE else View.GONE
                     binding.swipeRefresh.isRefreshing = false
                     binding.progressBar.visibility =
                         if (state.isLoadingChannels && state.channels.isEmpty()) View.VISIBLE else View.GONE

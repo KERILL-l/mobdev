@@ -60,6 +60,7 @@ data class ChatMessage(
     @JsonAdapter(MessageDataAdapter::class)
     val data: MessageData? = null,
     val time: Long? = null,
+    val isPending: Boolean = false,
 ) : Serializable {
 
     val formattedTime: String
